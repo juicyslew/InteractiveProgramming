@@ -21,6 +21,10 @@ class Bricka:
     def __init__(self):
         pygame.init()
 
+        self.xbrickNum = 9
+        self.ybrickNum = 9
+
+
         self.screen = pygame.display.set_mode(SCREEN_SIZE)
         pygame.display.set_caption("bricka (a breakout clone by codeNtronix.com)")
 
@@ -58,14 +62,16 @@ class Bricka:
 
 
     def create_bricks(self):
+        self.BRICK_WIDTH = (SCREEN_SIZE[0] - 2*marginx - (self.xbrickNum-1) * xspacing)/self.xbrickNum
+        self.BRICK_HEIGHT = (SCREEN_SIZE[1] - 2*marginy - (self.ybrickNum-1) * yspacing - bottom_to_brick)/self.ybrickNum
         y_ofs = marginy
         self.bricks = []
-        for i in range(ybrickNum):
+        for i in range(self.ybrickNum):
             x_ofs = marginx
-            for j in range(xbrickNum):
-                self.bricks.append(pygame.Rect(x_ofs,y_ofs,BRICK_WIDTH,BRICK_HEIGHT))
-                x_ofs += BRICK_WIDTH + xspacing
-            y_ofs += BRICK_HEIGHT + yspacing
+            for j in range(self.xbrickNum):
+                self.bricks.append(pygame.Rect(x_ofs,y_ofs,self.BRICK_WIDTH,self.BRICK_HEIGHT))
+                x_ofs += self.BRICK_WIDTH + xspacing
+            y_ofs += self.BRICK_HEIGHT + yspacing
 
     def draw_bricks(self):
         for brick in self.bricks:
@@ -92,8 +98,11 @@ class Bricka:
         if keys[pygame.K_SPACE] and self.state == STATE_BALL_IN_PADDLE:
             self.ball_vel = self.ball_vel_orig
             self.state = STATE_PLAYING
-        elif keys[pygame.K_RETURN] and (self.state == STATE_GAME_OVER or self.state == STATE_WON):
+        elif keys[pygame.K_RETURN] and (self.state == STATE_GAME_OVER):
             self.init_game()
+        elif keys[pygame.K_RETURN] and self.state == STATE_WON:
+            pygame.quit()
+            return True
 
     def move_pow(self):
         for power_up in self.pows:
@@ -199,11 +208,13 @@ class Bricka:
         while 1:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    sys.exit
-
+                    pygame.quit()
+                    return None
             self.clock.tick(50)
             self.screen.fill(BLACK)
-            self.check_input()
+            done = self.check_input()
+            if done:
+                return None
             if self.grow and self.shrink:
                 self.growtime = 999
                 self.shrinktime = 999
@@ -227,8 +238,7 @@ class Bricka:
             elif self.state == STATE_GAME_OVER:
                 self.show_message("GAME OVER. PRESS ENTER TO PLAY AGAIN")
             elif self.state == STATE_WON:
-                self.show_message("YOU WON! PRESS ENTER TO PLAY AGAIN")
-                self.level += 1
+                self.show_message("YOU WON! PRESS ENTER FOR THE NEXT LEVEL")
 
             self.draw_bricks()
             self.draw_Pow()
