@@ -11,11 +11,26 @@ import pygame
 import random
 import math
 
-SCREEN_SIZE   = 640,800
+SCREEN_SIZE   = 1020, 1020
 
+xbrickNum = 9
+ybrickNum = 9
+xspacing = 10
+yspacing = 10
+
+marginx = 50
+marginy = 50
+
+bottom_to_brick = 300
+
+BRICK_WIDTH = (SCREEN_SIZE[0] - 2*marginx - (xbrickNum-1) * xspacing)/xbrickNum
+BRICK_HEIGHT = (SCREEN_SIZE[1] - 2*marginy - (ybrickNum-1) * yspacing - bottom_to_brick)/ybrickNum
+
+print(BRICK_WIDTH)
+print(BRICK_HEIGHT)
 # Object dimensions
-BRICK_WIDTH   = 60
-BRICK_HEIGHT  = 60
+#BRICK_WIDTH   = 60
+#BRICK_HEIGHT  = 60
 PADDLE_WIDTH  = 80
 PADDLE_HEIGHT = 12
 POWER_WIDTH = 14
@@ -100,14 +115,14 @@ class Bricka:
 
 
     def create_bricks(self):
-        y_ofs = 35
+        y_ofs = marginy
         self.bricks = []
-        for i in range(7):
-            x_ofs = 35
-            for j in range(8):
+        for i in range(ybrickNum):
+            x_ofs = marginx
+            for j in range(xbrickNum):
                 self.bricks.append(pygame.Rect(x_ofs,y_ofs,BRICK_WIDTH,BRICK_HEIGHT))
-                x_ofs += BRICK_WIDTH + 10
-            y_ofs += BRICK_HEIGHT + 10
+                x_ofs += BRICK_WIDTH + xspacing
+            y_ofs += BRICK_HEIGHT + yspacing
 
     def draw_bricks(self):
         for brick in self.bricks:
@@ -276,7 +291,7 @@ class Bricka:
 
             # Draw ball
             if self.fireball == 0:
-                pygame.draw.circle(self.screen, WHITE, (self.ball.left + BALL_RADIUS, self.ball.top + BALL_RADIUS), BALL_RADIUS)
+                pygame.draw.circle(self.screen, WHITE, (int(self.ball.left) + BALL_RADIUS, int(self.ball.top) + BALL_RADIUS), BALL_RADIUS)
             else:
                 pygame.draw.circle(self.screen, FIREBLAZE, (self.ball.left + BALL_RADIUS, self.ball.top + BALL_RADIUS), BALL_RADIUS)
                 pygame.draw.circle(self.screen, FIREAFTER, (int(self.ball_left_old) + BALL_RADIUS, int(self.ball_top_old)+ BALL_RADIUS), int(BALL_RADIUS/1.35))
