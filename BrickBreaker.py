@@ -291,7 +291,7 @@ class Bricka:
 
             # Draw ball
             if self.fireball == 0:
-                pygame.draw.circle(self.screen, WHITE, (int(self.ball.left) + BALL_RADIUS, int(self.ball.top) + BALL_RADIUS), BALL_RADIUS)
+                pygame.draw.circle(self.screen, WHITE, (self.ball.left + BALL_RADIUS, self.ball.top + BALL_RADIUS), BALL_RADIUS)
             else:
                 pygame.draw.circle(self.screen, FIREBLAZE, (self.ball.left + BALL_RADIUS, self.ball.top + BALL_RADIUS), BALL_RADIUS)
                 pygame.draw.circle(self.screen, FIREAFTER, (int(self.ball_left_old) + BALL_RADIUS, int(self.ball_top_old)+ BALL_RADIUS), int(BALL_RADIUS/1.35))
