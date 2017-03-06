@@ -38,20 +38,20 @@ def main():
   down=2
   right=3
   left=4
-  step=20
-  block=[20,20]
-  x=randint(1,20)
-  y=randint(2,22)
+  step=5
+  block=[5,5]
+  x=randint(1,20*4)
+  y=randint(2,22*4)
   applexy=[]
-  snakexy=[int(x*20),int(y*20)]
-  snakelist=[[x*20,y*20],[(x-20)*20,(y*20)]]
+  snakexy=[int(x*20*4),int(y*20*4)]
+  snakelist=[[x*20*4,y*20*4],[(x-20*4)*20*4,(y*20*4)]]
   apple=0
   dead=0
   grow=0
   direction=right
   score=0
   start=0
-  screen=pygame.display.set_mode((640,480),0,24)
+  screen=pygame.display.set_mode((1920,1080),0,24)
   clock=pygame.time.Clock()
 
 #game loop

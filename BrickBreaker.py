@@ -11,20 +11,37 @@ import pygame
 import random
 import math
 
-SCREEN_SIZE = 640, 480
 
+SCREEN_SIZE   = 1020, 1020
+
+xbrickNum = 9
+ybrickNum = 9
+xspacing = 10
+yspacing = 10
+
+marginx = 50
+marginy = 50
+
+bottom_to_brick = 300
+
+BRICK_WIDTH = (SCREEN_SIZE[0] - 2*marginx - (xbrickNum-1) * xspacing)/xbrickNum
+BRICK_HEIGHT = (SCREEN_SIZE[1] - 2*marginy - (ybrickNum-1) * yspacing - bottom_to_brick)/ybrickNum
+
+print(BRICK_WIDTH)
+print(BRICK_HEIGHT)
 # Object dimensions
-BRICK_WIDTH = 60
-BRICK_HEIGHT = 15
-PADDLE_WIDTH = 80
+#BRICK_WIDTH   = 60
+#BRICK_HEIGHT  = 60
+PADDLE_WIDTH  = 80
+
 PADDLE_HEIGHT = 12
 POWER_WIDTH = 14
 POWER_HEIGHT = 8
 BALL_DIAMETER = 16
-BALL_RADIUS = BALL_DIAMETER / 2
+BALL_RADIUS   = int(BALL_DIAMETER / 2)
 POW_FALL_SPD = 3.0
-BALL_SPEED = 7.0
-PADDLE_SPEED = 8.0
+BALL_SPEED = 11.0
+PADDLE_SPEED = 10.0
 GROW_PADDLE = 120
 SHRINK_PADDLE = 40
 
@@ -46,6 +63,7 @@ FIREBLAZE = (225, 225, 0)
 FIREAFTER = (225, 100, 0)
 GROW = (50, 240, 50)
 SHRINK = (240, 50, 50)
+AIRBOUNCE =(200, 40, 230)
 
 # State constants
 STATE_BALL_IN_PADDLE = 0
@@ -89,24 +107,24 @@ class Bricka:
         self.ball_top = float(self.ball.top)
         self.ball_vel_orig = [BALL_SPEED*math.cos(theta), BALL_SPEED-math.sin(theta)]
         self.pows = [] #list of PowerUp instances
-        self.powtypes = ['fire', 'grow','shrink']
-        self.powdict = {'fire':FIREBLAZE,'grow':GROW, 'shrink':SHRINK} #Dictionary for powerups their shape and their colors
-        self.totfiretime = 200 #50 frames a second, so 4 seconds
-        self.totgrowtime = 200
-        self.totshrinktime = 200
+        self.powtypes = ['fire', 'grow','shrink', 'airbounce']
+        self.powdict = {'fire':FIREBLAZE,'grow':GROW, 'shrink':SHRINK, 'airbounce':AIRBOUNCE} #Dictionary for powerups their shape and their colors
+        self.totfiretime = 150 #50 frames a second, so 4 seconds
+        self.totgrowtime = 300
+        self.totshrinktime = 300
         #self.pow_effect_dict = {'fire':self.fireball=1}
         self.create_bricks()
 
 
     def create_bricks(self):
-        y_ofs = 35
+        y_ofs = marginy
         self.bricks = []
-        for i in range(7):
-            x_ofs = 35
-            for j in range(8):
+        for i in range(ybrickNum):
+            x_ofs = marginx
+            for j in range(xbrickNum):
                 self.bricks.append(pygame.Rect(x_ofs,y_ofs,BRICK_WIDTH,BRICK_HEIGHT))
-                x_ofs += BRICK_WIDTH + 10
-            y_ofs += BRICK_HEIGHT + 5
+                x_ofs += BRICK_WIDTH + xspacing
+            y_ofs += BRICK_HEIGHT + yspacing
 
     def draw_bricks(self):
         for brick in self.bricks:
@@ -169,7 +187,7 @@ class Bricka:
         for brick in self.bricks:
             if self.ball.colliderect(brick):
                 #print(brick.topright)
-                self.score += 3
+                self.score += 5
                 if self.fireball == False:
                     if self.ball_left < brick.right and self.ball_left_old > brick.right:  #(self.ball.collidepoint(brick.topright) or self.ball.collidepoint(brick.bottomright)):
                         self.ball_vel[0] = abs(self.ball_vel[0])
@@ -178,7 +196,7 @@ class Bricka:
                     else:
                         self.ball_vel[1] = -self.ball_vel[1]
                 self.bricks.remove(brick)
-                if random.random() > .70:
+                if random.random() > .925:
                     self.pows.append(PowerUp(random.choice(self.powtypes),pygame.Rect(brick.centerx - POWER_WIDTH/2,brick.centery- POWER_HEIGHT/2,POWER_WIDTH,POWER_HEIGHT)))
                 break
 
@@ -234,6 +252,7 @@ class Bricka:
         self.growtime = 0
         self.shrink = 0
         self.shrinktime = 0
+        self.airbounce = 0
         while 1:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
