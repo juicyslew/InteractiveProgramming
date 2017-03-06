@@ -1,12 +1,3 @@
-<<<<<<< HEAD
-
-
-
-class Level:
-
-class Level1(Level):
-    
-=======
 from BrickBreaker import *
 from testOne import *
 from constants import *
@@ -21,8 +12,8 @@ class Level1(Bricka):
         self.score = 10000
 
     def create_bricks(self):
-        self.xbrickNum = 2
-        self.ybrickNum = 1
+        self.xbrickNum = 3
+        self.ybrickNum = 2
         Bricka.create_bricks(self)
 
 #class Level2(Game):
@@ -32,8 +23,8 @@ class Level2(Bricka):
         Bricka.__init__(self)
 
     def create_bricks(self):
-        self.xbrickNum = 2
-        self.ybrickNum = 2
+        self.xbrickNum = 4
+        self.ybrickNum = 5
         Bricka.create_bricks(self)
 
 #class Level3(Game):
@@ -43,4 +34,3 @@ if __name__ == "__main__":
     Level1().run()
     Level2().run()
     main()
->>>>>>> 695132dedbd6617a0346b9a696e0be45ba8daaf8

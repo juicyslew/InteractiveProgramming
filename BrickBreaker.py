@@ -19,7 +19,12 @@ class PowerUp:
 
 class Bricka:
     def __init__(self):
+        pygame.mixer.pre_init(44100, -16, 1, 512)
+        pygame.mixer.init()
         pygame.init()
+
+        self.brick_pop_sound = pygame.mixer.Sound("PopSound.wav")
+        self.paddle_sound = pygame.mixer.Sound("paddleHit.wav")
 
         self.xbrickNum = 9
         self.ybrickNum = 9
@@ -136,6 +141,7 @@ class Bricka:
     def handle_collisions(self):
         for brick in self.bricks:
             if self.ball.colliderect(brick):
+                self.brick_pop_sound.play()
                 #print(brick.topright)
                 self.score += 5
                 if self.fireball == False:
@@ -165,12 +171,12 @@ class Bricka:
                     self.shrinktime = 0
                 self.pows.remove(power_up)
         if self.ball.colliderect(self.paddle):
+            self.paddle_sound.play()
             self.ball.top = PADDLE_Y - BALL_DIAMETER
             #print(type(self.paddle.right))
             #print(type(self.paddle.left))
             #print(type(self.ball.center[0]))
             balltopad = float(self.paddle.right - self.ball.center[0])/float(self.paddle.right - self.paddle.left)
-            print(balltopad)
             theta = balltopad*math.pi*(90)/180 + math.pi*(45)/180
             #print(theta)
             self.ball_vel = [BALL_SPEED*math.cos(theta), BALL_SPEED*-math.sin(theta)]
@@ -242,7 +248,9 @@ class Bricka:
 
             self.draw_bricks()
             self.draw_Pow()
-
+            pygame.draw.line(self.screen, FIREBLAZE, (self.ball.center[0], self.ball.center[1]), (self.ball.center[0] + self.ball_vel[0]*3, self.ball.center[1]+self.ball_vel[1]*3), 4)
+            pygame.draw.line(self.screen, AIRBOUNCE, (self.ball.center[0], SCREEN_SIZE[1]-20), (self.ball.center[0]+self.ball_vel[0]*3, SCREEN_SIZE[1]-20), 4)
+            pygame.draw.line(self.screen, AIRBOUNCE, (SCREEN_SIZE[0]-20, self.ball.center[1]), (SCREEN_SIZE[0]-20, self.ball.center[1]+self.ball_vel[1]*3), 4)
             # Draw paddle
             pygame.draw.rect(self.screen, BLUE, self.paddle)
 
