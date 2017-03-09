@@ -12,8 +12,8 @@ class Level1(Bricka):
         self.score = 10000
 
     def create_bricks(self):
-        self.xbrickNum = 3
-        self.ybrickNum = 2
+        self.xbrickNum = 4
+        self.ybrickNum = 3
         Bricka.create_bricks(self)
 
 #class Level2(Game):
@@ -23,7 +23,7 @@ class Level2(Bricka):
         Bricka.__init__(self)
 
     def create_bricks(self):
-        self.xbrickNum = 4
+        self.xbrickNum = 6
         self.ybrickNum = 5
         Bricka.create_bricks(self)
 
