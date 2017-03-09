@@ -13,7 +13,7 @@ class Level1(Bricka):
         Bricka.init_game(self)
         self.start_message = "WELCOME TO OUR BEAUTIFUL BREAKOUT CLONE"
     def create_bricks(self):
-        self.power_chance = .99
+        self.power_chance = .125
         self.double_chance = .0
         self.xbrickNum = 3
         self.ybrickNum = 3
