@@ -10,6 +10,7 @@ import pygame
 import random
 import math
 from constants import *
+from spritesheet_functions import SpriteSheet
 
 class PowerUp: #Class for Powerups
     def __init__(self, name, shape):
@@ -47,12 +48,16 @@ class Bricka: #Class of the game
 
 
     def init_game(self):
+        sprite_sheet = SpriteSheet("tiles_spritesheet.png")
+        self.image = sprite_sheet.get_image(504, 504, 70, 40)
+
         #set lives state and score
         self.lives = 3
         self.score = 0
         self.state = STATE_BALL_IN_PADDLE
 
         #create paddle, ball, collision object
+
         self.paddle   = pygame.Rect(300,PADDLE_Y,PADDLE_WIDTH,PADDLE_HEIGHT)
         self.ball     = pygame.Rect(300,PADDLE_Y - BALL_DIAMETER,BALL_DIAMETER,BALL_DIAMETER)
 
@@ -257,9 +262,10 @@ class Bricka: #Class of the game
             pygame.draw.line(self.screen, FIREBLAZE, (self.ball.center[0], self.ball.center[1]), (self.ball.center[0] + self.ball_vel[0]*3, self.ball.center[1]+self.ball_vel[1]*3), 4)
             pygame.draw.line(self.screen, AIRBOUNCE, (self.ball.center[0], SCREEN_SIZE[1]-20), (self.ball.center[0]+self.ball_vel[0]*3, SCREEN_SIZE[1]-20), 4)
             pygame.draw.line(self.screen, AIRBOUNCE, (SCREEN_SIZE[0]-20, self.ball.center[1]), (SCREEN_SIZE[0]-20, self.ball.center[1]+self.ball_vel[1]*3), 4)
+            self.screen.blit(self.image, (self.paddle.left,self.paddle.top))
 
             # Draw paddle
-            pygame.draw.rect(self.screen, BLUE, self.paddle)
+            #pygame.draw.rect(self.screen, BLUE, self.paddle)
 
             # Draw ball (check for fireball powerup)
             if self.fireball == 0:
