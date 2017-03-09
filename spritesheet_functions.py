@@ -1,8 +1,9 @@
 import pygame
 import constants
+""" Credit to programarcadegames"""
 
 class SpriteSheet(object):
-    """ Class used to to grab images out of a sprite sheet. """
+    """ Class used to to grab images out of a sprite sheet """
 
     def __init__(self, file_name):
         """ Constructor. Pass in the file name of the sprite sheet. """

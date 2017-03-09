@@ -10,7 +10,7 @@ Explanation video: http://youtu.be/O4Y5KrNgP_c
 """
 import pygame
 import random
-
+from spritesheet_functions import SpriteSheet
 # --- Global constants ---
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -23,15 +23,17 @@ SCREEN_HEIGHT = 500
 # --- Classes ---
 
 
+
 class Block(pygame.sprite.Sprite):
     """ This class represents a simple block the player collects. """
 
     def __init__(self):
         """ Constructor, create the image of the block. """
         super().__init__()
-        self.image = pygame.Surface([20, 20])
-        self.image.fill(BLACK)
+        sprite_sheet = SpriteSheet("tiles_spritesheet.png")
+        self.image = sprite_sheet.get_image(504, 504, 70, 40)
         self.rect = self.image.get_rect()
+
 
     def reset_pos(self):
         """ Called when the block is 'collected' or falls off
