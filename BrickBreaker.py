@@ -49,9 +49,14 @@ class Bricka: #Class of the game
 
     def init_game(self):
         sprite_sheet = SpriteSheet("tiles_spritesheet.png")
-
+        banan_sheet = SpriteSheet("Banan.png")
+        self.paddle_sprt = sprite_sheet.get_image(648, 648, 70, 40)
+        self.ball_sprt = banan_sheet.get_image(0,0,32,32)
+        self.fireball_sprt = banan_sheet.get_image(0,32,32,32)
+        self.fireball_aftersprt = banan_sheet.get_image(0,64,32,32)
 
         #set lives state and score
+        self.fps = 50
         self.lives = 3
         self.score = 0
         self.state = STATE_BALL_IN_PADDLE
@@ -59,6 +64,8 @@ class Bricka: #Class of the game
         self.power_chance = .2
         self.start_message = ""
         self.ball_speed = BALL_SPEED
+        self.max_paddle_x = MAX_PADDLE_X
+        self.start_total_time = 9999999
 
         #create paddle, ball, collision object
         self.paddle   = pygame.Rect(300,PADDLE_Y,PADDLE_WIDTH,PADDLE_HEIGHT)
@@ -67,8 +74,11 @@ class Bricka: #Class of the game
         #Create banner to be behind text for readability
         self.banner   = pygame.Rect(0, SCREEN_SIZE[1]/2 - BANNER_HEIGHT/2, SCREEN_SIZE[0], BANNER_HEIGHT)
 
-        #Create sprite for paddle
-        self.image = pygame.transform.scale(sprite_sheet.get_image(504, 504, 70, 40), (self.paddle.width, self.paddle.height))
+        #Create sprites
+        self.paddle_image = pygame.transform.scale(self.paddle_sprt, (self.paddle.width, self.paddle.height))
+        self.ball_image = pygame.transform.scale(self.ball_sprt, (self.ball.width, self.ball.height))
+        self.fireball_image = pygame.transform.scale(self.fireball_sprt, (self.ball.width, self.ball.height))
+        self.fireball_afterimage = pygame.transform.scale(self.fireball_aftersprt, (self.ball.width, self.ball.height))
 
         #Set starting angle, velocity, and setup powerups
         theta = random.random()*math.pi*(90.)/180. + math.pi*45./180.
@@ -79,11 +89,11 @@ class Bricka: #Class of the game
         self.pows = [] #list of PowerUp instances
         self.powtypes = ['fire', 'grow', 'shrink', 'airbounce','speedup', 'slowdown'] # list of powerup types
         self.powdict = {'fire':FIREBLAZE,'grow':GROW, 'shrink':SHRINK, 'airbounce':AIRBOUNCE, 'speedup':SPEEDUP, 'slowdown': SLOWDOWN} #Dictionary for powerups their shape and their colors
-        self.totfiretime = 250 #50 frames a second, so 5 seconds
-        self.totgrowtime = 400 #8 seconds
-        self.totshrinktime = 400 #8 seconds
-        self.totspeeduptime = 350 #7 seconds
-        self.totslowdowntime = 350 #7 seconds
+        self.totfiretime = 5*self.fps #50 frames a second, so 5 seconds
+        self.totgrowtime = 8*self.fps #8 seconds
+        self.totshrinktime = 8*self.fps #8 seconds
+        self.totspeeduptime = 7*self.fps #7 seconds
+        self.totslowdowntime = 7*self.fps #7 seconds
         self.create_bricks() #Run create_bricks method
 
 
@@ -125,10 +135,10 @@ class Bricka: #Class of the game
 
         if keys[pygame.K_RIGHT]: #if right pressed, move paddle right
             self.paddle.left += PADDLE_SPEED
-            if self.paddle.left > MAX_PADDLE_X:
-                self.paddle.left = MAX_PADDLE_X
+            if self.paddle.left > self.max_paddle_x:
+                self.paddle.left = self.max_paddle_x
 
-        if self.airbounce and keys[pygame.K_SPACE] and self.state == STATE_PLAYING:
+        if self.airbounce and keys[pygame.K_LSHIFT] and self.state == STATE_PLAYING:
             self.airbounce = 0
             self.ball_vel[1] = -abs(self.ball_vel[1])
 
@@ -229,16 +239,18 @@ class Bricka: #Class of the game
                     self.speedup = True
                     self.speeduptime = 0
                     self.ball_speed = BALL_SPEEDUP
-                    #theta = math.atan2(self.ball_vel[1], self.ball_vel[0])
-                    self.ball_vel[0] *= BALL_SPEEDUP/BALL_SPEED
-                    self.ball_vel[1] *= BALL_SPEEDUP/BALL_SPEED
+                    theta = math.atan2(self.ball_vel[1], self.ball_vel[0])
+                    self.ball_vel = [self.ball_speed*math.cos(theta), self.ball_speed*math.sin(theta)] #set new ball trajectory
+                    #self.ball_vel[0] *= BALL_SPEEDUP/BALL_SPEED
+                    #self.ball_vel[1] *= BALL_SPEEDUP/BALL_SPEED
                 if power_up.name == 'slowdown':
                     self.slowdown = True
                     self.slowdowntime = 0
                     self.ball_speed = BALL_SLOWDOWN
-                    #theta = math.atan2(self.ball_vel[1], self.ball_vel[0])
-                    self.ball_vel[0] *= BALL_SLOWDOWN/BALL_SPEED
-                    self.ball_vel[1] *= BALL_SLOWDOWN/BALL_SPEED
+                    theta = math.atan2(self.ball_vel[1], self.ball_vel[0])
+                    self.ball_vel = [self.ball_speed*math.cos(theta), self.ball_speed*math.sin(theta)] #set new ball trajectory
+                    #self.ball_vel[0] *= BALL_SLOWDOWN/BALL_SPEED
+                    #self.ball_vel[1] *= BALL_SLOWDOWN/BALL_SPEED
                 self.pows.remove(power_up) #Remove powerup from existing powerups
         if self.ball.colliderect(self.paddle): #if ball collide with paddle
             self.paddle_sound.play() #Play paddle sound
@@ -255,7 +267,7 @@ class Bricka: #Class of the game
 
     def show_stats(self): #Show states at top of screen
         if self.font:
-            font_surface = self.font.render("SCORE: " + str(self.score) + " LIVES: " + str(self.lives), False, WHITE) #Specify text
+            font_surface = self.font.render("SCORE: " + str(self.score) + " LIVES: " + str(self.lives) + " TIME: " + str(float(self.start_time)/self.fps), False, WHITE) #Specify text
             self.screen.blit(font_surface, (205,5)) #put on screen
 
     def show_message(self,message): #Show message on screen
@@ -286,13 +298,17 @@ class Bricka: #Class of the game
         # Set Start Message Params
         self.start_message_time = 200
         self.start_time = 0
+        self.timeExceed = False
         while 1: #While true
             self.start_time+=1
+            if self.start_time > self.start_total_time:
+                self.timeExceed = True
+                self.state = STATE_WON
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: #check if game is quit
                     pygame.quit() #quit the game
                     return None
-            self.clock.tick(50) #set fps to 50
+            self.clock.tick(self.fps) #set fps to 50
             self.screen.fill(BLACK) #fill background with black
             done = self.check_input() #check if game is done
             if done:
@@ -302,8 +318,10 @@ class Bricka: #Class of the game
                 self.shrinktime = 999
             elif self.grow: #grow power
                 self.paddle.width = GROW_PADDLE
+                self.max_paddle_x = MAX_PADDLE_X_GROW
             elif self.shrink: #shrink power
                 self.paddle.width = SHRINK_PADDLE
+                self.max_paddle_x = MAX_PADDLE_X_MINI
             if self.speedup and self.slowdown:
                 self.speeduptime = self.totspeeduptime
                 self.slowdowntime = self.totslowdowntime
@@ -323,20 +341,26 @@ class Bricka: #Class of the game
             self.draw_bricks() # draw bricks
             self.draw_Pow() #draw powerups
             #draw vector of ball and projections of vector onto sides of screen
-            pygame.draw.line(self.screen, FIREBLAZE, (self.ball.center[0], self.ball.center[1]), (self.ball.center[0] + self.ball_vel[0]*3, self.ball.center[1]+self.ball_vel[1]*3), 4)
-            pygame.draw.line(self.screen, AIRBOUNCE, (self.ball.center[0], SCREEN_SIZE[1]-20), (self.ball.center[0]+self.ball_vel[0]*3, SCREEN_SIZE[1]-20), 4)
-            pygame.draw.line(self.screen, AIRBOUNCE, (SCREEN_SIZE[0]-20, self.ball.center[1]), (SCREEN_SIZE[0]-20, self.ball.center[1]+self.ball_vel[1]*3), 4)
-            self.screen.blit(self.image, (self.paddle.left,self.paddle.top))
+            #pygame.draw.line(self.screen, FIREBLAZE, (self.ball.center[0], self.ball.center[1]), (self.ball.center[0] + self.ball_vel[0]*3, self.ball.center[1]+self.ball_vel[1]*3), 4)
+            #pygame.draw.line(self.screen, AIRBOUNCE, (self.ball.center[0], SCREEN_SIZE[1]-20), (self.ball.center[0]+self.ball_vel[0]*3, SCREEN_SIZE[1]-20), 4)
+            #pygame.draw.line(self.screen, AIRBOUNCE, (SCREEN_SIZE[0]-20, self.ball.center[1]), (SCREEN_SIZE[0]-20, self.ball.center[1]+self.ball_vel[1]*3), 4)
+
+            #paddle sprites
+            self.paddle_image = pygame.transform.scale(self.paddle_sprt, (self.paddle.width, self.paddle.height))
+            self.screen.blit(self.paddle_image, (self.paddle.left,self.paddle.top))
 
             # Draw paddle
             #pygame.draw.rect(self.screen, BLUE, self.paddle)
 
             # Draw ball (check for fireball powerup)
             if self.fireball == 0:
-                pygame.draw.circle(self.screen, WHITE, (self.ball.left + BALL_RADIUS, self.ball.top + BALL_RADIUS), BALL_RADIUS)
+                #pygame.draw.circle(self.screen, WHITE, (self.ball.left + BALL_RADIUS, self.ball.top + BALL_RADIUS), BALL_RADIUS)
+                self.screen.blit(self.ball_image, (self.ball_left, self.ball_top))
             else:
-                pygame.draw.circle(self.screen, FIREBLAZE, (self.ball.left + BALL_RADIUS, self.ball.top + BALL_RADIUS), BALL_RADIUS)
-                pygame.draw.circle(self.screen, FIREAFTER, (int(self.ball_left_old) + BALL_RADIUS, int(self.ball_top_old)+ BALL_RADIUS), int(BALL_RADIUS/1.35))
+                #pygame.draw.circle(self.screen, FIREBLAZE, (self.ball.left + BALL_RADIUS, self.ball.top + BALL_RADIUS), BALL_RADIUS)
+                #pygame.draw.circle(self.screen, FIREAFTER, (int(self.ball_left_old) + BALL_RADIUS, int(self.ball_top_old)+ BALL_RADIUS), int(BALL_RADIUS/1.35))
+                self.screen.blit(self.fireball_afterimage, (self.ball_left_old, self.ball_top_old))
+                self.screen.blit(self.fireball_image, (self.ball_left, self.ball_top))
             self.show_stats()
             #self.fireball = True
 
@@ -351,13 +375,11 @@ class Bricka: #Class of the game
             else:
                 self.growtime = 0
                 self.grow = False
-                self.paddle.width = PADDLE_WIDTH
             if self.shrink and self.shrinktime < self.totshrinktime:
                 self.shrinktime += 1
             else:
                 self.shrinktime = 0
                 self.shrink = False
-                self.paddle.width = PADDLE_WIDTH
             if self.speedup and self.speeduptime < self.totspeeduptime:
                 self.speeduptime += 1
             else:
@@ -368,12 +390,13 @@ class Bricka: #Class of the game
             else:
                 self.slowdowntime = 0
                 self.slowdown = False
+            if not (self.grow or self.shrink):
+                self.paddle.width = PADDLE_WIDTH
+                self.max_paddle_x = MAX_PADDLE_X
             if not (self.speedup or self.slowdown):
                 self.ball_speed = BALL_SPEED
                 theta = math.atan2(self.ball_vel[1],self.ball_vel[0])
                 self.ball_vel = [self.ball_speed*math.cos(theta), self.ball_speed*math.sin(theta)]
-
-
 
             #Update Screen Message
             if self.state == STATE_BALL_IN_PADDLE:
@@ -384,7 +407,10 @@ class Bricka: #Class of the game
             elif self.state == STATE_GAME_OVER:
                 self.show_message("GAME OVER. PRESS ENTER TO PLAY AGAIN")
             elif self.state == STATE_WON:
-                self.show_message("YOU WON! PRESS ENTER FOR THE NEXT LEVEL")
+                if self.timeExceed:
+                    self.show_message("I GUESS YOU SURVIVED LONG ENOUGH.... PRESS ENTER FOR THE NEXT LEVEL....")
+                else:
+                    self.show_message("YOU WON! PRESS ENTER FOR THE NEXT LEVEL")
             pygame.display.flip()
 
 if __name__ == "__main__":
