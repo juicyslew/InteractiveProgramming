@@ -10,6 +10,7 @@ class Level1(Bricka):
     def __init__(self):
         Bricka.__init__(self)
     def init_game(self):
+        self.caption_text = 'Somebody once told me'
         Bricka.init_game(self)
         self.start_message = "WELCOME TO OUR BEAUTIFUL BREAKOUT CLONE"
     def create_bricks(self):
@@ -25,6 +26,7 @@ class Level2(Bricka):
     def __init__(self):
         Bricka.__init__(self)
     def init_game(self):
+        self.caption_text = 'The world is going to roll me'
         Bricka.init_game(self)
         self.start_message = "WE HOPE YOU LIKE BRICKS! THERE ARE MANY MORE TO COME"
     def create_bricks(self):
@@ -38,8 +40,9 @@ class Level3(Bricka):
     def __init__(self):
         Bricka.__init__(self)
     def init_game(self):
+        self.caption_text = 'I aint the sharpest tool in the shed'
         Bricka.init_game(self)
-        self.start_message = "BONUS ROUND:   SMASH THAT POWERUP BUTTOM"
+        self.start_message = "BONUS ROUND:   SMASH THAT POWERUP BUTTON."
     def create_bricks(self):
         self.power_chance = .625
         self.double_chance = .0
@@ -51,6 +54,7 @@ class Level4(Bricka):
     def __init__(self):
         Bricka.__init__(self)
     def init_game(self):
+        self.caption_text = 'She was lookin kinda dumb'
         Bricka.init_game(self)
         self.start_message = "BE CAREFUL, PURPLE BRICKS ARE MORE DURABLE."
     def create_bricks(self):
@@ -64,6 +68,7 @@ class Level5(Bricka):
     def __init__(self):
         Bricka.__init__(self)
     def init_game(self):
+        self.caption_text = 'With her finger and her thumb'
         Bricka.init_game(self)
         self.start_message = "BONUS ROUND:   GET SCHWIFTY"
         self.start_total_time = 50*120 #after 2 minutes (120 seconds) the player will have survived long enough
@@ -82,6 +87,7 @@ class Level6(Bricka):
     def __init__(self):
         Bricka.__init__(self)
     def init_game(self):
+        self.caption_text = 'In the shape of an L on her forehead'
         Bricka.init_game(self)
         self.start_message = "THESE PURPLE BLOCKS JUST WON'T QUIT"
     def create_bricks(self):
@@ -95,6 +101,7 @@ class Level7(Bricka):
     def __init__(self):
         Bricka.__init__(self)
     def init_game(self):
+        elf.caption_text = 'THE YEARS START COMING'
         Bricka.init_game(self)
         self.start_message = "BONUS ROUND:   WHAT IN FRESH HECK IS GOING ON?"
     def create_bricks(self):

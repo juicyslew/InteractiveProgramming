@@ -42,6 +42,7 @@ class Bricka: #Class of the game
             self.font = pygame.font.Font(None,30)
         else:
             self.font = None
+        self.caption_text = "AND THEY DON'T STOP COMING"
 
         #Run Method init_game
         self.init_game()
@@ -54,6 +55,7 @@ class Bricka: #Class of the game
         self.ball_sprt = banan_sheet.get_image(0,0,32,32)
         self.fireball_sprt = banan_sheet.get_image(0,32,32,32)
         self.fireball_aftersprt = banan_sheet.get_image(0,64,32,32)
+        pygame.display.set_caption(self.caption_text)
 
         #set lives state and score
         self.fps = 50
